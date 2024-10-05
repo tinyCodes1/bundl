@@ -61,7 +61,7 @@ const showHelp=()=> {
     const parts = Deno.mainModule.split(`/`);
     const scriptName = parts[parts.length -1];
     console.log(
-        `Usage: ${scriptName} <args>
+        `Usage: ${scriptName} [Options] <filename>
         simple wrapper around deno_emit.
             Options:
             -h Show this help message.
