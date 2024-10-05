@@ -1,0 +1,10 @@
+# Exclude test files and directories
+# /file.name
+./deno.lock
+./docs
+
+
+# Exclude configuration files
+# .editorconfig
+# .gitignore
+

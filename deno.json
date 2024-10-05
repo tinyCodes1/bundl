@@ -1,0 +1,11 @@
+{
+  "name":"@tinycode/bundl",
+  "version":"0.0.3",
+  "exports": {
+    ".": "./bundl.ts"
+  },
+  "dependencies": {
+    "@deno/emit": "jsr:@deno/emit",
+    "@std/path/resolve" : "jsr:@std/path/resolve"
+  }
+}
