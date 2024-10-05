@@ -87,3 +87,4 @@ const flags:Flags = parseArgs(Deno.args, {
 if (flags.h) { showHelp(); Deno.exit(0); }
 await main(flags);
 
+
