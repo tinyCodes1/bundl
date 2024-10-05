@@ -6,7 +6,7 @@
 
 import { bundle } from "jsr:@deno/emit@^0.40.0";
 import { resolve } from "jsr:@std/path@^0.224.0";
-import { parseArgs } from "jsr:@std/cli/parse-args";
+import { parseArgs } from "jsr:@std/cli@^1.0.6/parse-args";
 
 const isLocalFile=(path:string)=> {
     try {
