@@ -1,6 +1,6 @@
 # Exclude test files and directories
 # /file.name
-./deno.lock
+deno.lock
 
 
 # Exclude configuration files
