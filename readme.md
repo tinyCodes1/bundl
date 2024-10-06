@@ -3,7 +3,7 @@
 
 ## Install
 ```typescript
-deno install --allow-read --allow-write --allow-net --allow-env jsr:@tinycode/bundl
+deno install --allow-read --allow-write --allow-net --allow-env -fr jsr:@tinycode/bundl
 ```
 
 ## Usage
