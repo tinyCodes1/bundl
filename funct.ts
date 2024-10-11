@@ -7,7 +7,7 @@
 import { bundle } from "jsr:@deno/emit@^0.40.0";
 import { resolve } from "jsr:@std/path@^0.224.0";
 
-const isLocalFile=(path:string)=> {
+const isLocalFile=(path:string):boolean=> {
     try {
         new URL(path);
         return false;
@@ -29,8 +29,10 @@ const bundl = async(url:string):Promise<string>=> {
         const res = await bundle(filePath);
         const { code } = res;
         return code ;
-    } catch (error) {
-        rv = `Error in ${url} : ${error.message}` ;
+    } catch (err) {
+        if (err instanceof Error) {
+            rv = `Error in ${url} : ${err.message}` ;
+        }
     }
     return rv;
 }
