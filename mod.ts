@@ -1,1 +1,1 @@
-export {bundl} from "./funct.ts";
+export {bundl, isLocalFile} from "./funct.ts";

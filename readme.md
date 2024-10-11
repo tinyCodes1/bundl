@@ -3,7 +3,7 @@
 
 ## Install
 ```typescript
-deno install --allow-read --allow-write --allow-net --allow-env -fr jsr:@tinycode/bundl
+deno install -frgA jsr:@tinycode/bundl
 ```
 
 ## Usage
@@ -15,9 +15,15 @@ or
 bundl script.js -o output.js
 ```
 
-<h2>Available options:</h2>
-<div style="margin-left:10px;">
-    <p>-o   output file name</p>
-    <p>-d   debug mode (default: false)</p>
-    <p>-h   show this help message</p>
+<h2>Available options</h2>
+<div style="margin-left:20px;">
+<p>-o   output file name</p>
+<p>-d   debug mode (default: false)</p>
+<p>-h   show this help message</p>
 </div>
+
+
+<h2>Usage(in browser, Deno)</h2>
+```typescript
+import {bundl} from "https://jsr.io/@tinycode/bundl/0.0.7/mod.ts";
+```

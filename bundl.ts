@@ -5,7 +5,7 @@
  */
 
 import { parseArgs } from "jsr:@std/cli@^1.0.6/parse-args";
-import {isLocalFile, bundl} from "./funct.ts";
+import {isLocalFile, bundl} from "./mod.ts";
 
 const showHelp=()=> {
     const parts = Deno.mainModule.split(`/`);
