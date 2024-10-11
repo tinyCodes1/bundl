@@ -26,6 +26,6 @@ bundl script.js -o output.js
 <h2>Usage(in browser, Deno)</h2>
 <pre><code>
 
-import {bundl} from "https://jsr.io/@tinycode/bundl/0.1.0/mod.ts";
+import {bundl} from "https://jsr.io/@tinycode/bundl/0.1.1/mod.ts";
 
 </code></pre>
