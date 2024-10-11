@@ -64,12 +64,16 @@ const main=async(url:string, outputName:string)=>{
         return;
     }
     if (!outputName) {
-        outputName = url.replace(/\.js$/,`.b.js`).replace(/\.ts$/,`.b.js`);
+        outputName = url.replace(/\.js$/,`.b.js`).replace(/\.ts$/,`.b.js`).replace(/\.mjs$/,`.b.mjs`);
         out(`Prefer giving output file name with -o flag.`);
         if (!isLocalFile) {
             const parts = url.split(`/`);
-            outputName = parts[parts.length-1].replace(/\.js$/,`.b.js`).replace(/\.ts$/,`.b.js`);
+            outputName = parts[parts.length-1].replace(/\.js$/,`.b.js`).replace(/\.ts$/,`.b.js`).replace(/\.mjs$/,`.b.mjs`);
         }
+    }
+    if (outputName === url) {
+        out(`File name error. Not overwriting. Specify output file name with -o`);
+        return;
     }
     const bundledText = await bundl(url);
     Deno.writeTextFileSync(outputName , bundledText);
