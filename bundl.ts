@@ -5,7 +5,41 @@
  */
 
 import { parseArgs } from "jsr:@std/cli@^1.0.6/parse-args";
-import {isLocalFile, bundl} from "./funct.ts";
+import { bundle } from "jsr:@deno/emit@^0.40.0";
+import { resolve } from "jsr:@std/path@^0.224.0";
+
+const isLocalFile=(path:string):boolean=> {
+    try {
+        new URL(path);
+        return false;
+    } catch (_err) {
+        return true ;
+    }
+}
+
+const bundl = async(url:string):Promise<string>=> {
+    let rv = `err`;
+    try {
+        let filePath = ``;
+        if (isLocalFile(url)) {
+            filePath = resolve(Deno.cwd() , url);
+        } else {
+            filePath = url;
+        }
+        const res = await bundle(filePath);
+        const { code } = res;
+        return code ;
+    } catch (err) {
+        if (err instanceof Error) {
+            rv = `Error in ${url} : ${err.message}` ;
+        }
+    }
+    return rv;
+}
+
+export {bundl, isLocalFile};
+
+
 
 const showHelp=()=> {
     const parts = Deno.mainModule.split(`/`);
@@ -55,9 +89,9 @@ type Flags = {
 };
 
 const flags:Flags = parseArgs(Deno.args, {
-    boolean: [`h`, `d`],
+    boolean: [`h`],
     string: [`o`],
-    default: { h:false, d:false },
+    default: { h:false},
 });
 
 if (flags.h) { showHelp(); Deno.exit(0); }

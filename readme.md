@@ -18,14 +18,6 @@ bundl script.js -o output.js
 <h2>Available options</h2>
 <div style="margin-left:20px;">
 <p>-o   output file name</p>
-<p>-d   debug mode (default: false)</p>
 <p>-h   show this help message</p>
 </div>
 
-
-<h2>Usage(in browser, Deno)</h2>
-<pre><code>
-
-import {bundl} from "https://jsr.io/@tinycode/bundl/0.1.1/mod.ts";
-
-</code></pre>
