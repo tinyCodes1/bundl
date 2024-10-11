@@ -2,7 +2,8 @@
   "name":"@tinycode/bundl",
   "version":"0.1.0",
   "exports": {
-    ".": "./mod.ts"
+    ".": "./mod.ts",
+    "./bundl" : "./bundl.ts"
   },
   "dependencies": {
     "@deno/emit": "jsr:@deno/emit",
