@@ -37,10 +37,6 @@ const bundl = async(url:string):Promise<string>=> {
     return rv;
 }
 
-export {bundl, isLocalFile};
-
-
-
 const showHelp=()=> {
     const parts = Deno.mainModule.split(`/`);
     const scriptName = parts[parts.length -1];
@@ -84,7 +80,6 @@ const main=async(url:string, outputName:string)=>{
 type Flags = {
     h: boolean; 
     o: string;
-    d: boolean;
     _: string;
 };
 
