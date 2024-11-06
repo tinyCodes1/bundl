@@ -1,6 +1,7 @@
 # Exclude test files and directories
 # /file.name
 instruct
+.vim
 
 # Exclude configuration files
 # .editorconfig
