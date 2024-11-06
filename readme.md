@@ -6,7 +6,7 @@
 </p>
 
 <h2>Install/Update</h2>
-<pre><code>deno install -frA -e jsr:@tinycode/bundl -n bundl</code></pre>
+<pre><code>deno install -frgA jsr:@tinycode/bundl -n bundl</code></pre>
 
 <h2>Usage</h2>
 <pre><code>bundl script.ts -o output.js</code></pre>
