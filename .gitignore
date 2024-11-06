@@ -1,6 +1,6 @@
 # Exclude test files and directories
 # /file.name
-
+instruct
 
 # Exclude configuration files
 # .editorconfig
