@@ -4,9 +4,9 @@
  *  bundl : simple wrapper script around deno_emit
  */
 
-import { parseArgs } from "jsr:@std/cli@^1.0.6/parse-args";
-import { bundle } from "jsr:@deno/emit@^0.40.0";
-import { resolve } from "jsr:@std/path@^0.224.0";
+import { parseArgs } from "./deps.ts";
+import { bundle } from "./deps.ts";
+import { resolve } from "./deps.ts";
 
 const isLocalFile=(path:string):boolean=> {
     try {
@@ -17,12 +17,28 @@ const isLocalFile=(path:string):boolean=> {
     }
 }
 
+const fileExists=(path: string): boolean=> {
+    let rv = false;
+    try {
+        Deno.statSync(path);  
+        rv = true;
+    } catch (error) {
+        if (error instanceof Deno.errors.NotFound) {
+            rv = false; 
+        }
+    }
+    return rv;
+}
+
 const bundl = async(url:string):Promise<string>=> {
-    let rv = `err`;
     try {
         let filePath = ``;
         if (isLocalFile(url)) {
             filePath = resolve(Deno.cwd() , url);
+            if (!fileExists(filePath)) {
+                console.log(`File not found : ${filePath}`);
+                Deno.exit(1);
+            }
         } else {
             filePath = url;
         }
@@ -31,23 +47,10 @@ const bundl = async(url:string):Promise<string>=> {
         return code ;
     } catch (err) {
         if (err instanceof Error) {
-            rv = `Error in ${url} : ${err.message}` ;
+            out(`Error in file : ${url} : ${err.message}`);
         }
     }
-    return rv;
-}
-
-const showHelp=()=> {
-    const parts = Deno.mainModule.split(`/`);
-    const scriptName = parts[parts.length -1];
-    out(
-        `Usage: ${scriptName} [Options] <filename>
-        simple wrapper around deno_emit.
-            Options:
-            -h Show this help message.
-            -o Output file path/name.
-            `);
-        return;
+    return `err`;
 }
 
 const out=(outputText : string, newline:boolean=true)=>{
@@ -76,27 +79,24 @@ const main=async(url:string, outputName:string)=>{
         return;
     }
     const bundledText = await bundl(url);
-    Deno.writeTextFileSync(outputName , bundledText);
-    out(`output written to: ` + outputName);
+    if (bundledText !== `err`) {
+        Deno.writeTextFileSync(outputName , bundledText);
+        out(`output written to: ` + outputName);
+    }
 }
 
 // script starts here 
 type Flags = {
-    h: boolean; 
     o: string;
-    _: string;
+    i: string;
 };
 
 const flags:Flags = parseArgs(Deno.args, {
-    boolean: [`h`],
-    string: [`o`],
-    default: { h:false},
+    string: [`o`, `i`],
 });
 
-if (flags.h) { showHelp(); Deno.exit(0); }
-
 // setting variable for main/bundl
-const url = flags._[0];
+const url = flags.i;
 const outputName = flags.o;
 
 main(url, outputName);

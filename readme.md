@@ -1,23 +1,21 @@
-## Overview
-@tinycode/bundl is simple wrapper script around [deno_emit](https://deno.land/x/emit@0.40.0).
+<h1>@tinycode/bundl</h1>
 
-## Install
-```typescript
-deno install -frgA jsr:@tinycode/bundl
-```
+<h2>Overview</h2>
+<p><code>@tinycode/bundl</code> is a simple wrapper script around
+<a href="https://jsr.io/@deno/emit@0.46.0" target="_blank">deno_emit</a>.
+</p>
 
-## Usage
-```typescript
-bundl script.ts -o output.js
-```
-or
-```typescript
-bundl script.js -o output.js
-```
+<h2>Install/Update</h2>
+<pre><code>deno install -frA -e jsr:@tinycode/bundl/cli.ts -n bundl</code></pre>
 
-<h2>Available options</h2>
+<h2>Usage</h2>
+<pre><code>bundl script.ts -o output.js</code></pre>
+<p>Or</p>
+<pre><code>bundl script.js -o output.js</code></pre>
+
+<h2>Available Options</h2>
 <div style="margin-left:20px;">
-<p>-o   output file name</p>
-<p>-h   show this help message</p>
+<p><strong>-o</strong>  output file name</p>
+<p><strong>-w</strong>  watch for file changes</p>
+<p><strong>-h</strong>  show this help message</p>
 </div>
-

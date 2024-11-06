@@ -6,6 +6,6 @@
   },
   "dependencies": {
     "@deno/emit": "jsr:@deno/emit",
-    "@std/path/resolve" : "jsr:@std/path/resolve"
+    "@std/path/resolve" : "jsr:@std/path/resolve",
   }
 }
