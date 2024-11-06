@@ -16,6 +16,5 @@
 <h2>Available Options</h2>
 <div style="margin-left:20px;">
 <p><strong>-o</strong>  output file name</p>
-<p><strong>-w</strong>  watch for file changes</p>
 <p><strong>-h</strong>  show this help message</p>
 </div>
