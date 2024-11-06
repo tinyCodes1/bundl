@@ -11,7 +11,8 @@
     "jsr:@std/fs@0.223": "0.223.0",
     "jsr:@std/io@0.223": "0.223.0",
     "jsr:@std/path@0.223": "0.223.0",
-    "jsr:@std/path@^1.0.8": "1.0.8"
+    "jsr:@std/path@^1.0.8": "1.0.8",
+    "jsr:@tinycode/bundl@*": "0.1.4"
   },
   "jsr": {
     "@deno/cache-dir@0.13.2": {
@@ -64,6 +65,14 @@
     },
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
+    },
+    "@tinycode/bundl@0.1.4": {
+      "integrity": "4e81f6d98cebedf39a1582a4043aa5c5e60ad0b5ac1eabdbc5117ec9128caa33",
+      "dependencies": [
+        "jsr:@deno/emit",
+        "jsr:@std/cli",
+        "jsr:@std/path@^1.0.8"
+      ]
     }
   }
 }
