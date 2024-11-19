@@ -1,6 +1,4 @@
-<h1>@tinycode/bundl</h1>
-
-<h2>Overview</h2>
+<!-- <h2>Overview</h2> -->
 <p><code>@tinycode/bundl</code> is a simple wrapper script around
 <a href="https://jsr.io/@deno/emit@0.46.0" target="_blank">deno_emit</a>.
 </p>

@@ -6,25 +6,10 @@
 
 import { parseArgs } from "jsr:@std/cli@^1.0.6/parse-args";
 import { bundle } from "jsr:@deno/emit@^0.46.0";
-import { resolve } from "jsr:@std/path@^1.0.8";
-
-const isLocalFile=(path:string):boolean=> {
-    try {
-        new URL(path);
-        return false;
-    } catch (_err) {
-        return true ;
-    }
-}
 
 const bundl = async(url:string):Promise<string>=> {
     try {
-        let filePath = ``;
-        if (isLocalFile(url)) {
-            filePath = resolve(Deno.cwd() , url);
-        } else {
-            filePath = url;
-        }
+        const filePath = url;
         const res = await bundle(filePath);
         const { code } = res;
         return code ;
@@ -65,10 +50,8 @@ const main=async(url:string, outputName:string)=>{
     if (!outputName) {
         outputName = url.replace(/\.js$/,`.b.js`).replace(/\.ts$/,`.b.js`).replace(/\.mjs$/,`.b.mjs`);
         out(`Prefer giving output file name with -o flag.`);
-        if (!isLocalFile) {
-            const parts = url.split(`/`);
-            outputName = parts[parts.length-1].replace(/\.js$/,`.b.js`).replace(/\.ts$/,`.b.js`).replace(/\.mjs$/,`.b.mjs`);
-        }
+        const parts = url.split(`/`);
+        outputName = parts[parts.length-1].replace(/\.js$/,`.b.js`).replace(/\.ts$/,`.b.js`).replace(/\.mjs$/,`.b.mjs`);
     }
     if (outputName === url) {
         out(`File name error. Not overwriting. Specify output file name with -o`);
