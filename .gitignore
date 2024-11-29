@@ -1,7 +1,7 @@
 # Exclude test files and directories
 # /file.name
 .vim
-debug
+/debug
 
 # Exclude configuration files
 # .editorconfig

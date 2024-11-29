@@ -1,5 +1,5 @@
 <div style="background-color: red; color: white; padding: 5px; font-weight:bold">
-  EXPERIMENTAL
+  [EXPERIMENTAL]
 </div>
 
 
@@ -35,7 +35,7 @@ fetches dependencies via
 
 
 <h2>CLI Options</h2>
-<div style="margin-left:20px;">
+<div style="margin-left:30px;">
 <p><strong>-h</strong>  show this help message</p>
 <p><strong>-o</strong>  output file name</p>
 <p><strong>-j</strong>  Retrieve package from jsr.io</p>
