@@ -81,5 +81,16 @@
     "typescript@5.7.2": {
       "integrity": "sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg=="
     }
+  },
+  "redirects": {
+    "https://esm.sh/typescript@^5.7.2": "https://esm.sh/typescript@5.7.2"
+  },
+  "remote": {
+    "https://esm.sh/typescript@5.7.2": "619c737221f28eece163189b99dc46e07b9ccf35cfc4016c97021ef106d96552",
+    "https://esm.sh/v135/buffer-from@1.1.2/denonext/buffer-from.mjs": "078451542b62cb4261c01a01ff7e9bc0f94bef4eb710831d40e1f92c4dfe3883",
+    "https://esm.sh/v135/node_inspector.js": "d651c514b7dbd594bd491a8876296166803ddd18d638cf80ab5ec410e4afe605",
+    "https://esm.sh/v135/source-map-support@0.5.21/denonext/source-map-support.mjs": "4a3185b099f49b540b1ee768cb9d1912de4f27872b2e0d8ccfa93a3b3529d66a",
+    "https://esm.sh/v135/source-map@0.6.1/denonext/source-map.mjs": "ccff3bb06dea7c01a2c83cf12113697592e418fd06b55ae2bb4cb0a4e51a98b8",
+    "https://esm.sh/v135/typescript@5.7.2/denonext/typescript.mjs": "4e134c19cbac1eb50a87b2d62f851838cb045ff3484ff22191a1826cf5af00f2"
   }
 }

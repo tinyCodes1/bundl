@@ -4,10 +4,11 @@
  *  bundl : simple wrapper script around deno_emit
  */
 
+// import ts from "https://esm.sh/typescript@5.7.2";
 import ts from "npm:typescript@^5.7.2";
-import { parseArgs } from "jsr:@std/cli@^1.0.6/parse-args";
 import { bundle } from "jsr:@deno/emit@^0.46.0";
-import {dirname, resolve } from "jsr:@std/path@^1.0.8";
+import { parseArgs } from "jsr:@std/cli@^1.0.6/parse-args";
+import { dirname, resolve } from "jsr:@std/path@^1.0.8";
 import { UntarStream } from "jsr:@std/tar@^0.1.4/untar-stream";
 
 const ifexists=(path: string)=> {
@@ -213,11 +214,11 @@ const err=(errText : string, newline:boolean=true)=>{
     Deno.stderr.writeSync(output)
 }
 
-const out=(outputText : string, newline:boolean=true)=>{
-    if (newline) {
-        outputText += `\n`;
-    }
-    const output = new TextEncoder().encode(outputText);
+const out=(outputText:string, newline:boolean=true)=>{
+  if (newline) {
+    outputText += `\n`;
+  }
+  const output = new TextEncoder().encode(`\x1B[2K\r` + outputText);
     Deno.stdout.writeSync(output)
 }
 
@@ -225,31 +226,32 @@ const showHelp=()=> {
     const parts = Deno.mainModule.split(`/`);
     const scriptName = parts[parts.length -1];
 
-    const gray = "\x1b[37m";
+    const gray = "\x1b[94m";
     const bold = "\x1b[1m";
     const italic = "\x1b[3m";
     const reset = "\x1b[0m"; 
 
     out(`
-        A lightweight wrapper around deno_emit. It is intended for bundling local files, npm packages, and jsr packages. For npm packages, dependencies are fetched via esm.sh. All examples here assumes that script is installed with the default name, i.e., "bundl"
+        A lightweight wrapper around deno_emit. It is intended for bundling local files, npm packages, and jsr packages. For npm packages dependencies are fetched via esm.sh. All examples here assumes that script is installed with the default name, i.e. "bundl"
 
             ${bold}USAGE${reset}
             ${scriptName} [Options] <filename>
 
             ${bold}UTILITY ${reset}${gray}AND EXAMPLES${reset}
-            1. Bundle local file
-            ${gray}bundl localFile.ts -o localFile.js${reset}
+            1. Bundle local file/url
+                ${gray}bundl localFile.ts -o localFile.js
+                bundl url -o output.js${reset}
             2. Retrieve a package from jsr.io${reset}
-            ${gray}bundl -j @scope/package -o packageName.js${reset}
+                ${gray}bundl -j @scope/package -o packageName.js${reset}
             3. Retrieve a package from npm (via esm.sh and npm registry)
-            ${gray}bundl -n packageName -o packageName.js${reset}
+                ${gray}bundl -n packageName -o packageName.js${reset}
             esm.sh includes TypeScript types by default. To generate additional types, use the -t flag.${reset}
-            ${gray}bundl -n packageName -t -o packageName.js${reset}
+                ${gray}bundl -n packageName -t -o packageName.js${reset}
 
             ${bold}OPTIONS${reset}
             -h   Show this help message and exit
             -j   Retrieve package from jsr.io
-            -n   Retrieve package from npm. Uses esm.sh
+            -n   Retrieve package from npm. [Uses esm.sh]
             ${gray}For generating types for npm, additionally include -t flag${reset}
             -o   Specify the output file path or name
 
@@ -277,6 +279,7 @@ const removeExtensions = (fileName:string):string => {
 }
 
 const npmDtsRetrieval = async(parts0:string, outputName:string)=>{
+    out(`Downloading details from npm registry...`, false);
     const urlNpm = `https://registry.npmjs.org/${parts0}`;
         const metaDataNpm = readText(urlNpm);
     if (!metaDataNpm) {
@@ -294,8 +297,13 @@ const npmDtsRetrieval = async(parts0:string, outputName:string)=>{
     const tarUrl = metaJsonNpm[`versions`][latestVersion][`dist`][`tarball`];
     const tempDirNpm = Deno.makeTempDirSync();
     if (tarUrl) {
+        out(`Downloading npm package...`, false);
         const tarFile = download(tarUrl, tempDirNpm+S+parts0+`.tgz`);
+
+        out(`Unpacking npm package...`, false);
         await untgz(tarFile, tempDirNpm);
+
+        out(`Collecting dts files...`, false);
         const allDtsFiles = getFiles(tempDirNpm, true, `.d.ts$`);
         let allDtsText = ``;
         for (const dtsFile of allDtsFiles) {
@@ -330,6 +338,7 @@ const main=async(url:string, outputName:string, mode:string)=>{
     }
     writeText(outputName, bundledText);
     out(`Output written to: ` + outputName);
+
     if (mode === `none`) {
         const dtsText = getDtsText(url);
         if (dtsText) {
@@ -344,6 +353,7 @@ const getDtsText =(fileName:string, tmpJsrDir?:string)=>{
     const tmpDtsDir = Deno.makeTempDirSync();
     const compilerOptions: ts.CompilerOptions = {
         declaration: true,
+        allowJs: true,
         noEmit: false,
         outDir: tmpDtsDir
     };
@@ -354,7 +364,11 @@ const getDtsText =(fileName:string, tmpJsrDir?:string)=>{
     let totalText = ``;
     for (const dtsFile of dtsFiles) {
         const fileName = dtsFile.split(`/`).slice(-1).join(`.`).replace(`.d`,``);
-        totalText += `// ------------- ${fileName} ---------\n\n` + readText(dtsFile) + `\n\n\n\n`;
+        let dtsText = readText(dtsFile);
+        const fileNameRegex = new RegExp(`export.*from.*;`,`gi`);
+        dtsText = dtsText.replace(fileNameRegex, `// (removedLine) $&`);
+        dtsText = dtsText.replace(/^\#\!.*/gm, `// (removedLine) $&`);
+        totalText += `// ------------- ${fileName} ---------\n\n` + dtsText + `\n\n\n\n`;
     }
     removeDir(tmpDtsDir);
     if (tmpJsrDir) {
@@ -396,6 +410,8 @@ if (jsrMode) {
         out(`jsr path should start with @`);
         Deno.exit(0);
     }
+
+    out(`Retrieving version from jsr.io...`, false);
     const metaJson = readText(`https://jsr.io/${parts[0]}/${parts[1]}/meta.json`);
         let meta = JSON.parse(`{}`);
     try {
@@ -406,6 +422,7 @@ if (jsrMode) {
     }
     const latest = meta[`latest`];
 
+    out(`Retrieving other details from jsr.io...`, false);
     const versionJson = readText(`https://jsr.io/${parts[0]}/${parts[1]}/${latest}_meta.json`);
         const jsonObj = JSON.parse(versionJson);
     const exports = jsonObj[`exports`];
@@ -417,6 +434,8 @@ if (jsrMode) {
             laterParts = keyValue[key];
         }
     }
+
+    out(`Setting url and output name...`, false);
     if (laterParts) {
         if (laterParts.endsWith(`.ts`)) {
             url = `https://jsr.io/${parts[0]}/${parts[1]}/${latest}/${laterParts}`;
@@ -438,6 +457,9 @@ if (jsrMode) {
             outputName = parts[1] + `.js`;
         }
     }
+
+
+    out(`Downloading jsr files...`, false);
     const tempDir = Deno.makeTempDirSync();
     const mainFile = exports[`.`].replace(/^\.\//g, ``);
         const fileList = jsonObj[`manifest`];
@@ -450,6 +472,8 @@ if (jsrMode) {
                 writeText(tempDir + S + file, fileText);
             }
         }
+
+        out(`Generating types...`, false);
         if (mainFile) {
             const dtsText = getDtsText(tempDir + S + mainFile, tempDir);
             if (dtsText) {
@@ -464,17 +488,21 @@ if (jsrMode) {
 if (npmMode) {
     mode = `npm`;
     const parts = url.split(`/`);
+
+    out(`Retrieving link from esm.sh...`, false);
     const urlEsm = `https://esm.sh/${parts[0]}?dev&target=deno&bundle-deps`;
         const metaDataEsm = readText(urlEsm);
     if (!metaDataEsm) {
         out(`npm package not found. url: ${urlEsm}`);
         Deno.exit(0);
     }
+
+    out(`Setting url and output name...`, false);
     let laterurl = ``;
     const metaLines = metaDataEsm.split(/\n/);
     for (const line of metaLines) {
         const lineparts = line.split(` from `);
-        if (lineparts[0].trim() === `export *`) {
+        if (lineparts[0].trim() === `export { default }`) {
             laterurl = lineparts[1].replace(/;/,``).replace(/['"]/g,``).trim();
         }
     }
@@ -491,10 +519,32 @@ if (npmMode) {
     }
 }
 
+
+let isUrl = false;
+let endsWithExtension = false
+if (url.startsWith(`https://`) || url.startsWith(`http://`)) {
+    isUrl = true;
+}
+if ((url.endsWith(`.js`) || url.endsWith(`.ts`) || url.endsWith(`.mjs`))) {
+    endsWithExtension = true;
+}
+
+if ((isUrl) && (!endsWithExtension)) {
+    url = url.replace(/\/$/,``) + `/mod.ts`;
+}
+
+
+
 if ((!outputName && (url))) {
     out(`Prefer giving output file name with -o flag.`);
     const parts = url.split(`/`);
-    outputName = removeExtensions(parts[parts.length-1]) + `.js` ;
+ //   outputName = removeExtensions(parts[parts.length-1]) + `.js` ;
+    outputName = removeExtensions(parts[parts.length-1]) ;
+    if (outputName == `mod`) {
+        if (parts[parts.length-2]) {
+            outputName = removeExtensions(parts[parts.length-2]).split(`@`)[0];
+        }
+    }
 }
 
 if (import.meta.main) {

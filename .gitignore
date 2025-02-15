@@ -3,6 +3,7 @@
 .vim
 /debug
 
+
 # Exclude configuration files
 # .editorconfig
 # .gitignore
