@@ -56,4 +56,4 @@ or
 <p style="margin-left: 20px;">This project is licensed under the <a href="./LICENSES/LICENSE.txt">MIT License</a>.</p>
 
 <h3>Dependencies</h3>
-<p style="margin-left: 20px;">Some dependencies may be licensed under different terms. (see <a href="./LICENSES">LICENSES</a> for more details.)</p>
+<p style="margin-left: 20px;">Some dependencies may be licensed under different terms. (see <a href="./LICENSES">LICENSES</a> for more details)</p>
