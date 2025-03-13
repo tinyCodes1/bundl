@@ -1,5 +1,5 @@
 <div style="padding: 5px; font-weight:bold"> [EXPERIMENTAL] </div>
-
+<div style="padding: 5px"> - Always use with version number </div>
 
 <br/>
 <a href="https://jsr.io/@tinycode/bundl">
@@ -12,7 +12,7 @@
 <p style="margin-left: 20px;"><code>@tinycode/bundl</code>
 is a lightweight wrapper around 
 <a href="https://jsr.io/@deno/emit@0.46.0" target="_blank">deno_emit</a>.
-It is useful for bundling local files, npm packages, or jsr packages. Bundling is often necessary for debugging, script minification, or creating offline applications.</p>
+It is useful for bundling local files, npm packages, or jsr packages. Any other modules eg. deno/x can be bundled via url. It is also useful for writing types of existing javascript and typescript files.</p>
 
 <p style="margin-left: 20px;">For npm packages,
 <code>@tinycode/bundl</code>
@@ -20,9 +20,7 @@ fetches dependencies via
 <a href="https://esm.sh" target="_blank">esm.sh</a></p>
 
 <p style="margin-left: 20px;">
-Any other modules eg. deno/x can be bundled via url.</p>
-
-<p style="margin-left: 20px;">
+Bundling is often necessary for debugging, script minification, or creating offline applications. 
 For online applications or cutting-edge projects, it is recommended to use URLs directly from jsr, npm or esm.sh</p>
 
 

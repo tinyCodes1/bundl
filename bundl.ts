@@ -268,7 +268,7 @@ const bundl = async(url:string):Promise<string>=> {
         return code ;
     } catch (error) {
         if (error instanceof Error) {
-            err(`Error in ${url}`);
+            err(`Error in ${url} : ${error.message}`);
         }
     }
     return `err`;
@@ -307,7 +307,25 @@ const npmDtsRetrieval = async(parts0:string, outputName:string)=>{
         const allDtsFiles = getFiles(tempDirNpm, true, `.d.ts$`);
         let allDtsText = ``;
         for (const dtsFile of allDtsFiles) {
-            const dtsText = readText(dtsFile);
+            let dtsText = readText(dtsFile);
+
+            const dtsTextLines = dtsText.split(`\n`);
+            const fileNameRegex = new RegExp(`export.*from.*;`,`gi`);
+            const importLineRegex = new RegExp(`import.*from.*;`,`gi`);
+            for (const l in dtsTextLines) {
+                let dtsTextLine = dtsTextLines[l];
+            //    dtsTextLine = dtsTextLine.replace(fileNameRegex, `// (removedLine) $&`);
+            //    dtsTextLine = dtsTextLine.replace(importLineRegex, `// (removedLine) $&`);
+            //    dtsTextLine = dtsTextLine.replace(/^\#\!.*/g, `// (removedLine) $&`);
+
+                dtsTextLine = dtsTextLine.replace(fileNameRegex, ``);
+                dtsTextLine = dtsTextLine.replace(importLineRegex, ``);
+                dtsTextLine = dtsTextLine.replace(/^\#\!.*/g, ``);
+
+dtsTextLines[l] = dtsTextLine;
+            }
+            dtsText = dtsTextLines.join(`\n`);
+
             const fileName = dtsFile.split(`/`).slice(-1).join(``);
             allDtsText += `// ------------- ${fileName} ---------\n\n` + dtsText + `\n\n\n\n`;
         }
@@ -325,6 +343,10 @@ const main=async(url:string, outputName:string, mode:string)=>{
         out(`Give filepath`);
         return;
     }
+    if (!/.js$/.test(outputName)) {
+        outputName += `.js`;
+    }
+
     if (outputName === url) {
         out(`File name error. Not overwriting. Specify another file name with -o`);
         return;
@@ -333,9 +355,7 @@ const main=async(url:string, outputName:string, mode:string)=>{
     if (bundledText === `err`) {
         return;
     }
-    if (!/.js$/.test(outputName)) {
-        outputName += `.js`;
-    }
+
     writeText(outputName, bundledText);
     out(`Output written to: ` + outputName);
 
@@ -365,9 +385,23 @@ const getDtsText =(fileName:string, tmpJsrDir?:string)=>{
     for (const dtsFile of dtsFiles) {
         const fileName = dtsFile.split(`/`).slice(-1).join(`.`).replace(`.d`,``);
         let dtsText = readText(dtsFile);
+        const dtsTextLines = dtsText.split(`\n`);
         const fileNameRegex = new RegExp(`export.*from.*;`,`gi`);
-        dtsText = dtsText.replace(fileNameRegex, `// (removedLine) $&`);
-        dtsText = dtsText.replace(/^\#\!.*/gm, `// (removedLine) $&`);
+        const importLineRegex = new RegExp(`import.*from.*;`,`gi`);
+        for (const l in dtsTextLines) {
+            let dtsTextLine = dtsTextLines[l];
+         //   dtsTextLine = dtsTextLine.replace(fileNameRegex, `// (removedLine) $&`);
+         //   dtsTextLine = dtsTextLine.replace(importLineRegex, `// (removedLine) $&`);
+         //   dtsTextLine = dtsTextLine.replace(/^\#\!.*/g, `// (removedLine) $&`);
+
+            dtsTextLine = dtsTextLine.replace(fileNameRegex, ``);
+            dtsTextLine = dtsTextLine.replace(importLineRegex, ``);
+            dtsTextLine = dtsTextLine.replace(/^\#\!.*/g, ``);
+
+dtsTextLines[l] = dtsTextLine;
+        }
+        dtsText = dtsTextLines.join(`\n`);
+
         totalText += `// ------------- ${fileName} ---------\n\n` + dtsText + `\n\n\n\n`;
     }
     removeDir(tmpDtsDir);
@@ -458,7 +492,6 @@ if (jsrMode) {
         }
     }
 
-
     out(`Downloading jsr files...`, false);
     const tempDir = Deno.makeTempDirSync();
     const mainFile = exports[`.`].replace(/^\.\//g, ``);
@@ -490,7 +523,8 @@ if (npmMode) {
     const parts = url.split(`/`);
 
     out(`Retrieving link from esm.sh...`, false);
-    const urlEsm = `https://esm.sh/${parts[0]}?dev&target=deno&bundle-deps`;
+    //   const urlEsm = `https://esm.sh/${parts[0]}?dev&target=deno&bundle-deps`;
+    const urlEsm = `https://esm.sh/${parts[0]}?dev&target=esnext&bundle-deps`;
         const metaDataEsm = readText(urlEsm);
     if (!metaDataEsm) {
         out(`npm package not found. url: ${urlEsm}`);
@@ -538,7 +572,7 @@ if ((isUrl) && (!endsWithExtension)) {
 if ((!outputName && (url))) {
     out(`Prefer giving output file name with -o flag.`);
     const parts = url.split(`/`);
- //   outputName = removeExtensions(parts[parts.length-1]) + `.js` ;
+    //   outputName = removeExtensions(parts[parts.length-1]) + `.js` ;
     outputName = removeExtensions(parts[parts.length-1]) ;
     if (outputName == `mod`) {
         if (parts[parts.length-2]) {
