@@ -25,9 +25,9 @@ For online applications or cutting-edge projects, it is recommended to use URLs 
 
 
 <h2>Install/Update</h2>
-<pre><code>deno install -frgA jsr:@tinycode/bundl -n bundl</code></pre>
+<pre><code>deno install -frgA jsr:@tinycode/bundl@0.2.3 -n bundl</code></pre>
 or
-<pre><code>deno install -frg --allow-read --allow-write --allow-env --allow-net jsr:@tinycode/bundl -n bundl</code></pre>
+<pre><code>deno install -frg --allow-read --allow-write --allow-env --allow-net jsr:@tinycode/bundl@0.2.3 -n bundl</code></pre>
 
 <h2>Usage</h2>
 <em>Local file</em>
